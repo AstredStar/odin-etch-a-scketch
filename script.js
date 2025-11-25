@@ -1,19 +1,35 @@
 RANDOM = "random"
-const palette = ["red","yellow","blue","green","orange","purple"];
+const palette = ["red","orange","yellow","green","blue","purple"];
 let paintColor= RANDOM;
 let colorButtons=[];
 const colorSelect = document.querySelector("#colorSelect");
 const gridSize = 600;
 const grid = document.querySelector("#grid");
-const chopButton = document.querySelector("#chopGrid>button");
+const chopButton = document.querySelector("#set");
+const rechopButton = document.querySelector("#reset");
 const chopInput = document.querySelector("#chopGrid>input");
+let chopNum = 10;
+
+function resetColorButtons(){
+    for (const btn of colorButtons) btn.style["background-color"] = "rgba(252, 245, 237, 1)"
+}
 
 function addColorButton(color){
     let button = document.createElement("button");
     button.classList.add("colorButton");
-    button.textContent = `${color}`;
-    button.onclick= (event) => paintColor = color;
+    button.title = `${color}`;
+
+    button.onclick= (event) => {
+        paintColor = color;
+        resetColorButtons();
+        event.target.style["background-color"]= "rgba(255, 145, 0, 1)";
+    }
+
+    colorButtons.push(button);
     colorSelect.appendChild(button);
+    button.div = document.createElement("div");
+    button.appendChild(button.div); 
+    return button;
 }
 
 function rgbToint(rgb){
@@ -86,12 +102,28 @@ grid.addEventListener("mouseover",(event)=>{
 })
 
 chopButton.onclick = (event)=>{
-    chopGrid(parseInt(chopInput.value));
+    chopNum=chopInput.value;
+    chopGrid(parseInt(chopNum));
+}
+rechopButton.onclick = (event)=>{
+    chopGrid(parseInt(chopNum));
 }
 
 document.documentElement.style.setProperty("--grid-size", `${gridSize}px`);
 
-chopGrid(10);
+chopGrid(chopNum);
 
-addColorButton(RANDOM);
-for (color of palette) addColorButton(color);
+let RNBColor = 'linear-gradient(45deg';
+for (color of palette){
+    RNBColor+= ','+color;
+}
+RNBColor+=')'
+const rnbowButton = addColorButton(RANDOM);
+rnbowButton.div.style["background"] = RNBColor;
+
+for (color of palette) {
+    const button = addColorButton(color);
+    button.div.style["background-color"] = color;
+}
+resetColorButtons()
+rnbowButton.style["background-color"]= "rgba(255, 145, 0, 1)";
