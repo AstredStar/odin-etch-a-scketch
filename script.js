@@ -1,5 +1,20 @@
+RANDOM = "random"
 const palette = ["red","yellow","blue","green","orange","purple"];
-let paintColor= -1;
+let paintColor= RANDOM;
+let colorButtons=[];
+const colorSelect = document.querySelector("#colorSelect");
+const gridSize = 600;
+const grid = document.querySelector("#grid");
+const chopButton = document.querySelector("#chopGrid>button");
+const chopInput = document.querySelector("#chopGrid>input");
+
+function addColorButton(color){
+    let button = document.createElement("button");
+    button.classList.add("colorButton");
+    button.textContent = `${color}`;
+    button.onclick= (event) => paintColor = color;
+    colorSelect.appendChild(button);
+}
 
 function rgbToint(rgb){
     let colors = rgb.slice(4,-1).split(',');
@@ -20,11 +35,6 @@ function darkenrgb (rgb){
     }
     return intTorgb(colors);
 }
-
-const gridSize = 600;
-document.documentElement.style.setProperty("--grid-size", `${gridSize}px`);
-
-const grid = document.querySelector("#grid");
 
 function chopGrid (n){
     if (!Number.isInteger(n)) {
@@ -60,12 +70,12 @@ function getRandomColor(){
 }
 
 grid.addEventListener("mouseover",(event)=>{
-    if (paintColor==-1) event.target.style["background-color"]=getRandomColor();
+    if (paintColor==RANDOM) event.target.style["background-color"]=getRandomColor();
 
     else {
-        if (event.target.mycolor !== palette[paintColor]) {
-            event.target.mycolor = palette[paintColor];
-            event.target.style["background-color"] = palette[paintColor];
+        if (event.target.mycolor !== paintColor) {
+            event.target.mycolor = paintColor;
+            event.target.style["background-color"] = paintColor;
         }
         else{
             let rgb = window.getComputedStyle( event.target ).getPropertyValue( "background-color" );
@@ -75,10 +85,13 @@ grid.addEventListener("mouseover",(event)=>{
      
 })
 
-const chopButton = document.querySelector("#chopGrid>button");
-const chopInput = document.querySelector("#chopGrid>input");
 chopButton.onclick = (event)=>{
     chopGrid(parseInt(chopInput.value));
 }
 
+document.documentElement.style.setProperty("--grid-size", `${gridSize}px`);
+
 chopGrid(10);
+
+addColorButton(RANDOM);
+for (color of palette) addColorButton(color);
